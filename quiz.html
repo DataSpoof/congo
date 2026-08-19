@@ -15,9 +15,54 @@
             font-family: Arial, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
+            padding: 0;
+        }
+
+        nav {
+            background: #333;
+            padding: 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        nav li {
+            margin: 0;
+        }
+
+        nav a {
+            display: block;
+            padding: 15px 25px;
+            color: white;
+            text-decoration: none;
+            transition: background 0.3s;
+            font-weight: 500;
+        }
+
+        nav a:hover {
+            background: #667eea;
+        }
+
+        nav a.active {
+            background: #667eea;
+            border-bottom: 3px solid #764ba2;
+        }
+
+        main {
             display: flex;
             justify-content: center;
             align-items: center;
+            min-height: calc(100vh - 60px);
             padding: 20px;
         }
 
@@ -28,6 +73,67 @@
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
             max-width: 600px;
             width: 100%;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .section-content {
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+
+        .section p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+
+        .contact-form {
+            margin-top: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
         }
 
         h1 {
@@ -134,8 +240,19 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <div id="quiz">
+    <nav>
+        <ul>
+            <li><a href="#" class="nav-link active" onclick="showSection('home', event)">Home</a></li>
+            <li><a href="#" class="nav-link" onclick="showSection('about', event)">About Us</a></li>
+            <li><a href="#" class="nav-link" onclick="showSection('contact', event)">Contact Us</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <div class="container">
+            <!-- Home Section -->
+            <div id="home" class="section active">
+                <div id="quiz">
             <h1>Web Development Quiz</h1>
 
             <div class="question-group">
@@ -257,9 +374,66 @@
             <div id="message"></div>
             <button class="reset-btn" onclick="resetQuiz()">Retake Quiz</button>
         </div>
-    </div>
+            </div>
+
+            <!-- About Us Section -->
+            <div id="about" class="section">
+                <div class="section-content">
+                    <h2>About Us</h2>
+                    <p>Welcome to the Web Development Quiz! This interactive platform is designed to test and enhance your knowledge of web development fundamentals.</p>
+                    <p>Our mission is to provide a comprehensive and engaging learning experience for aspiring web developers and professionals looking to sharpen their skills.</p>
+                    <p>The quiz covers essential topics including HTML, CSS, and JavaScript - the three pillars of web development. Each question is carefully crafted to assess your understanding of core concepts and best practices.</p>
+                    <p>Whether you're just starting your web development journey or looking to refresh your knowledge, this quiz offers valuable insights into your current skill level and areas for improvement.</p>
+                    <p>Join thousands of developers who have used our platform to validate their knowledge and track their progress in mastering web development.</p>
+                </div>
+            </div>
+
+            <!-- Contact Us Section -->
+            <div id="contact" class="section">
+                <div class="section-content">
+                    <h2>Contact Us</h2>
+                    <p>We'd love to hear from you! Whether you have questions, suggestions, or feedback about our quiz platform, please get in touch using the form below.</p>
+                    <form class="contact-form" onsubmit="handleContactSubmit(event)">
+                        <div class="form-group">
+                            <label for="name">Full Name</label>
+                            <input type="text" id="name" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="subject">Subject</label>
+                            <input type="text" id="subject" name="subject" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="message">Message</label>
+                            <textarea id="message" name="message" required></textarea>
+                        </div>
+                        <button type="submit">Send Message</button>
+                    </form>
+                </div>
+            </div>
+        </div>
 
     <script>
+        function showSection(sectionId, event) {
+            event.preventDefault();
+
+            const sections = document.querySelectorAll('.section');
+            sections.forEach(section => section.classList.remove('active'));
+
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => link.classList.remove('active'));
+
+            document.getElementById(sectionId).classList.add('active');
+            event.target.classList.add('active');
+
+            if (sectionId === 'home') {
+                resetQuiz();
+            }
+        }
+
         function submitQuiz() {
             const answers = {
                 q1: document.querySelector('input[name="q1"]:checked')?.value,
@@ -294,6 +468,18 @@
             document.querySelectorAll('input[type="radio"]').forEach(input => input.checked = false);
             document.getElementById('quiz').style.display = 'block';
             document.getElementById('result').style.display = 'none';
+        }
+
+        function handleContactSubmit(event) {
+            event.preventDefault();
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const subject = document.getElementById('subject').value;
+            const message = document.getElementById('message').value;
+
+            alert(`Thank you for contacting us!\n\nName: ${name}\nEmail: ${email}\nSubject: ${subject}\nMessage: ${message}\n\nWe will get back to you soon!`);
+
+            event.target.reset();
         }
     </script>
 </body>

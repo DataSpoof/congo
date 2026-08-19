@@ -16,6 +16,124 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #loginPage {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            width: 100%;
+        }
+
+        .login-container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .login-container h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        .login-form-group {
+            margin-bottom: 20px;
+        }
+
+        .login-form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .login-form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            font-family: Arial, sans-serif;
+        }
+
+        .login-form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 10px;
+        }
+
+        .login-btn:hover {
+            background: #764ba2;
+        }
+
+        .login-error {
+            color: red;
+            text-align: center;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+        .test-credentials {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            font-size: 12px;
+            text-align: center;
+            color: #666;
+        }
+
+        #quizPage {
+            display: none;
+            width: 100%;
+        }
+
+        .logout-btn {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            padding: 10px 20px;
+            background: #764ba2;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .logout-btn:hover {
+            background: #667eea;
+        }
+
+        .user-info {
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            color: white;
+            font-weight: bold;
         }
 
         nav {
@@ -240,13 +358,44 @@
     </style>
 </head>
 <body>
-    <nav>
-        <ul>
-            <li><a href="#" class="nav-link active" onclick="showSection('home', event)">Home</a></li>
-            <li><a href="#" class="nav-link" onclick="showSection('about', event)">About Us</a></li>
-            <li><a href="#" class="nav-link" onclick="showSection('contact', event)">Contact Us</a></li>
-        </ul>
-    </nav>
+    <!-- Login Page -->
+    <div id="loginPage">
+        <div class="login-container">
+            <h1>Quiz Login</h1>
+            <form onsubmit="handleLogin(event)">
+                <div class="login-form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" required placeholder="Enter username">
+                </div>
+                <div class="login-form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required placeholder="Enter password">
+                </div>
+                <button type="submit" class="login-btn">Login</button>
+                <div id="loginError" class="login-error"></div>
+            </form>
+            <div class="test-credentials">
+                <strong>Test Credentials:</strong><br>
+                Username: <code>admin</code><br>
+                Password: <code>password123</code><br><br>
+                <strong>⚠️ SQL Injection Test:</strong><br>
+                Try: <code>' OR '1'='1</code> in username field
+            </div>
+        </div>
+    </div>
+
+    <!-- Quiz Page -->
+    <div id="quizPage">
+        <div class="user-info">Welcome, <span id="currentUser"></span>!</div>
+        <button class="logout-btn" onclick="handleLogout()">Logout</button>
+
+        <nav>
+            <ul>
+                <li><a href="#" class="nav-link active" onclick="showSection('home', event)">Home</a></li>
+                <li><a href="#" class="nav-link" onclick="showSection('about', event)">About Us</a></li>
+                <li><a href="#" class="nav-link" onclick="showSection('contact', event)">Contact Us</a></li>
+            </ul>
+        </nav>
 
     <main>
         <div class="container">
@@ -481,6 +630,93 @@
 
             event.target.reset();
         }
+
+        // Simulated user database (for educational purposes)
+        const users = {
+            'admin': 'password123',
+            'user': 'user123',
+            'test': 'test123'
+        };
+
+        // Vulnerable SQL query simulation (demonstrates SQL Injection)
+        function vulnerableLogin(username, password) {
+            // VULNERABLE: This simulates vulnerable SQL query construction
+            // In real scenarios, this would be: SELECT * FROM users WHERE username = 'username' AND password = 'password'
+
+            // Check for SQL injection patterns
+            if (username.includes("'") || username.includes('"') || username.includes('--') || username.includes(';')) {
+                console.warn('⚠️ SQL Injection attempt detected in username:', username);
+
+                // Demonstrate vulnerability: ' OR '1'='1 would bypass authentication
+                if (username.includes("'") && username.includes("OR")) {
+                    console.warn('⚠️ Classic SQL Injection pattern detected: OR clause injection');
+                    return { success: true, username: 'INJECTED_USER', message: 'SQL Injection successful - This is a vulnerability!' };
+                }
+            }
+
+            return null;
+        }
+
+        // Secure login function (uses parameterized approach)
+        function secureLogin(username, password) {
+            // SECURE: Direct object lookup instead of string concatenation
+            if (users[username] && users[username] === password) {
+                return { success: true, username: username };
+            }
+            return null;
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const loginError = document.getElementById('loginError');
+
+            // First check for SQL injection (educational)
+            const injectionResult = vulnerableLogin(username, password);
+            if (injectionResult && injectionResult.success && injectionResult.username === 'INJECTED_USER') {
+                loginError.innerHTML = '⚠️ <strong>SQL Injection Detected!</strong><br>Your username contained: ' + username + '<br>This is a security vulnerability! In production, this should be prevented with parameterized queries.';
+                return;
+            }
+
+            // Secure login attempt
+            const result = secureLogin(username, password);
+
+            if (result && result.success) {
+                // Hide login page and show quiz
+                document.getElementById('loginPage').style.display = 'none';
+                document.getElementById('quizPage').style.display = 'block';
+                document.getElementById('currentUser').textContent = result.username;
+
+                // Store session
+                sessionStorage.setItem('isLoggedIn', 'true');
+                sessionStorage.setItem('currentUser', result.username);
+
+                loginError.innerHTML = '';
+            } else {
+                loginError.innerHTML = '❌ Invalid username or password. Please try again.<br>Test: admin / password123';
+            }
+        }
+
+        function handleLogout() {
+            sessionStorage.clear();
+            document.getElementById('loginPage').style.display = 'flex';
+            document.getElementById('quizPage').style.display = 'none';
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            document.getElementById('loginError').innerHTML = '';
+        }
+
+        // Check if user is already logged in
+        window.addEventListener('load', function() {
+            if (sessionStorage.getItem('isLoggedIn') === 'true') {
+                document.getElementById('loginPage').style.display = 'none';
+                document.getElementById('quizPage').style.display = 'block';
+                document.getElementById('currentUser').textContent = sessionStorage.getItem('currentUser');
+            }
+        });
     </script>
+    </div>
 </body>
 </html>
